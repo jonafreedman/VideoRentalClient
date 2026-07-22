@@ -1,12 +1,18 @@
 package com.rental.client.controller;
 
 import com.rental.client.AuthService;
+import com.rental.client.UserSession;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class LoginController {
 
@@ -27,7 +33,6 @@ public class LoginController {
 
         registerButton.setOnAction(event -> {
             System.out.println("Create Account Clicked!");
-            // Optional: Switch to registration screen later
         });
     }
 
@@ -42,12 +47,30 @@ public class LoginController {
 
         System.out.println("Attempting connection to backend for user: " + username);
         
-        // Make the HTTP request
+        // Check credentials with Spring Boot
         boolean success = authService.login(username, password);
 
         if (success) {
-            showAlert(AlertType.INFORMATION, "Success", "Welcome back, " + username + "!");
-            // Next: Open your main application Dashboard here
+            // 1. Save user to session memory
+            UserSession.startSession(username);
+
+            // 2. Load the main Dashboard view from the 'view' package
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/rental/client/view/DashboardView.fxml")
+                );
+                Parent dashboardRoot = loader.load();
+                
+                // Switch the current window's scene to the Dashboard
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setScene(new Scene(dashboardRoot, 950, 650));
+                stage.setTitle("Movie Rental System - Dashboard");
+                stage.centerOnScreen();
+                
+            } catch (Exception e) {
+                System.err.println("Failed to load DashboardView.fxml:");
+                e.printStackTrace();
+            }
         } else {
             showAlert(AlertType.ERROR, "Login Failed", "Invalid username or password. Please try again.");
         }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rental.client.controller.DashboardController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #0f172a; -fx-padding: 12px 20px;">
+         <children>
+            <Label style="-fx-font-size: 24px;" text="&#127916;" />
+            <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" text="Movie Rental Hub" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <SplitPane dividerPositions="0.23" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+        <items>
+          <AnchorPane minWidth="180.0" style="-fx-background-color: #ffffff;">
+               <children>
+                  <VBox spacing="10.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                     <children>
+                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" text="Categories" textFill="#334155">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ListView fx:id="categoryListView" style="-fx-background-radius: 6px;" VBox.vgrow="ALWAYS">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="All Movies" />
+                                 <String fx:value="🎬 Action &amp; Adventure" />
+                                 <String fx:value="🚀 Sci-Fi &amp; Fantasy" />
+                                 <String fx:value="😂 Comedy" />
+                                 <String fx:value="🎭 Drama" />
+                                 <String fx:value="👻 Horror" />
+                              </FXCollections>
+                           </items>
+                        </ListView>
+                        <Button fx:id="viewProfileButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="200.0" style="-fx-background-color: #e2e8f0; -fx-text-fill: #334155; -fx-font-weight: bold; -fx-cursor: hand;" text="👤 My Account Log" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+          <AnchorPane minWidth="500.0">
+               <children>
+                  <VBox spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <TextField fx:id="searchTextField" prefHeight="35.0" promptText="Search movies by keywords..." style="-fx-background-radius: 6px;" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="90.0" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Search" />
+                           </children>
+                        </HBox>
+                        
+                        <TableView fx:id="moviesTableView" style="-fx-background-radius: 6px;" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="titleColumn" prefWidth="300.0" text="Movie Title" />
+                            <TableColumn fx:id="categoryColumn" prefWidth="180.0" text="Category" />
+                            <TableColumn fx:id="availabilityColumn" prefWidth="140.0" text="Status" />
+                          </columns>
+                        </TableView>
+                        
+                        <HBox alignment="TOP_RIGHT">
+                           <children>
+                              <Button fx:id="viewDetailsButton" mnemonicParsing="false" prefHeight="36.0" prefWidth="170.0" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Inspect &amp; Rent ➔" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</VBox>

@@ -19,7 +19,7 @@
          <children>
             <VBox alignment="CENTER" spacing="5.0">
                <children>
-                  <Label text="🎬" style="-fx-font-size: 48px;" />
+                  <Label text="&#127916;" style="-fx-font-size: 48px;" />
                   <Label text="Movie Rental System" style="-fx-text-fill: #1e293b;">
                      <font>
                         <Font name="Segoe UI Bold" size="26.0" />
