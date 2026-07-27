@@ -4,7 +4,7 @@ module com.rental.client {
     requires javafx.fxml;
     requires java.net.http; // Enables HTTP client requests
     
-    // Gives JavaFX permission to open the screens
-    opens com.rental.client to javafx.graphics;
+    // Gives JavaFX permission to open screens and read model properties (PropertyValueFactory)
+    opens com.rental.client to javafx.graphics, javafx.fxml, javafx.base;
     opens com.rental.client.controller to javafx.fxml;
 }
