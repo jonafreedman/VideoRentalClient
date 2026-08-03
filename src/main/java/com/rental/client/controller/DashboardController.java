@@ -14,6 +14,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class DashboardController {
 
@@ -110,10 +116,43 @@ public class DashboardController {
 
     private void handleInspectAndRent() {
         Movie selectedMovie = moviesTableView.getSelectionModel().getSelectedItem();
-        if (selectedMovie != null) {
-            System.out.println("Selected Movie to Rent: " + selectedMovie.getTitle() + " (Status: " + selectedMovie.getStatus() + ")");
-        } else {
-            System.out.println("No movie selected in table.");
+
+        if (selectedMovie == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a movie from the table first.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/rental/client/view/MovieDetailView.fxml")
+            );
+            Parent root = loader.load();
+
+            MovieDetailController controller = loader.getController();
+            controller.setMovieData(selectedMovie);
+
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Inspect & Rent - " + selectedMovie.getTitle());
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(viewDetailsButton.getScene().getWindow());
+            modalStage.setScene(new Scene(root, 750, 620));
+            modalStage.setResizable(false);
+            
+            // Show window and wait until closed
+            modalStage.showAndWait();
+
+            // Refresh dashboard TableView if rental status changed
+            if (controller.isRentalConfirmed()) {
+                moviesTableView.refresh();
+            }
+
+        } catch (Exception e) {
+            System.err.println("Failed to load MovieDetailView.fxml:");
+            e.printStackTrace();
         }
     }
 
