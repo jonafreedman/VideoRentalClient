@@ -157,8 +157,28 @@ public class DashboardController {
     }
 
     private void handleViewProfile() {
-        if (UserSession.getInstance() != null) {
-            System.out.println("Opening account logs for: " + UserSession.getInstance().getUsername());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/rental/client/view/ProfileView.fxml")
+            );
+            Parent root = loader.load();
+
+            ProfileController controller = loader.getController();
+            // Load history logs based on master movie list
+            controller.loadUserRentalHistory(masterMovieList);
+
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Customer Profile & Rental History Logs");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(viewProfileButton.getScene().getWindow());
+            modalStage.setScene(new Scene(root, 750, 500));
+            modalStage.setResizable(false);
+
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            System.err.println("Failed to open ProfileView.fxml:");
+            e.printStackTrace();
         }
     }
 }
