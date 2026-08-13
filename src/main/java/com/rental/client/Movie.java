@@ -1,20 +1,25 @@
 package com.rental.client;
 
-public class Movie {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Movie {
     private Long id;
     private String title;
     private String category;
-    private String status; // e.g., "Available" or "Rented"
+    private String status;
+    private int totalCopies;
+    private int availableCopies;
 
-    // Default constructor (required for JSON deserialization)
     public Movie() {}
 
-    public Movie(Long id, String title, String category, String status) {
+    public Movie(Long id, String title, String category, String status, int totalCopies, int availableCopies) {
         this.id = id;
         this.title = title;
         this.category = category;
         this.status = status;
+        this.totalCopies = totalCopies;
+        this.availableCopies = availableCopies;
     }
 
     // Getters and Setters
@@ -29,4 +34,10 @@ public class Movie {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public int getTotalCopies() { return totalCopies; }
+    public void setTotalCopies(int totalCopies) { this.totalCopies = totalCopies; }
+
+    public int getAvailableCopies() { return availableCopies; }
+    public void setAvailableCopies(int availableCopies) { this.availableCopies = availableCopies; }
 }

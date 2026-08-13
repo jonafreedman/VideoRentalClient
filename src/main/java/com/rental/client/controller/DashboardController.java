@@ -1,8 +1,10 @@
 package com.rental.client.controller;
 
+import java.util.List;
+
 import com.rental.client.Movie;
-import com.rental.client.MovieService;
 import com.rental.client.UserSession;
+import com.rental.client.service.ApiClient;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -42,9 +44,9 @@ public class DashboardController {
     @FXML
     private Button viewProfileButton;
 
-    private final MovieService movieService = new MovieService();
     private ObservableList<Movie> masterMovieList = FXCollections.observableArrayList();
     private FilteredList<Movie> filteredMovieList;
+    private final ApiClient apiClient = new ApiClient();
 
     @FXML
     public void initialize() {
@@ -54,15 +56,17 @@ public class DashboardController {
             viewProfileButton.setText("👤 " + currentUser + "'s Account");
         }
 
-        // 2. Map Table Columns to Movie object getters (getTitle(), getCategory(), getStatus())
+        // 2. Map Table Columns to Movie object getters
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         availabilityColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // 3. Fetch Movies & Setup Filtering Wrapper
-        masterMovieList.addAll(movieService.fetchAllMovies());
+        // 3. Setup Filtered List Wrapper
         filteredMovieList = new FilteredList<>(masterMovieList, p -> true);
         moviesTableView.setItems(filteredMovieList);
+
+        // Fetch initial movies from Spring Boot API
+        loadMoviesFromBackend();
 
         // 4. Live Search listener (filters automatically as you type)
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -79,7 +83,18 @@ public class DashboardController {
         viewDetailsButton.setOnAction(event -> handleInspectAndRent());
         viewProfileButton.setOnAction(event -> handleViewProfile());
     }
-
+    
+    private void loadMoviesFromBackend() {
+        try {
+            // Fetch movies from Spring Boot REST API
+            List<Movie> moviesFromApi = apiClient.getAllMovies();
+            masterMovieList.setAll(moviesFromApi);
+        } catch (Exception e) {
+            System.err.println("Could not connect to Spring Boot server on http://localhost:8080/api. Keeping local data.");
+            e.printStackTrace();
+        }
+    }
+    
     // Method for movie search
     private void applyFilters() {
         String searchText = searchTextField.getText() == null ? "" : searchTextField.getText().toLowerCase().trim();
