@@ -1,3 +1,6 @@
+/**
+ * Service class handling HTTP authentication requests to the Spring Boot REST backend.
+ */
 package com.rental.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,6 +18,9 @@ public class AuthService {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Initializes the client with a 5-second connection timeout setting.
+     */
     public AuthService() {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
@@ -22,11 +28,15 @@ public class AuthService {
     }
 
     /**
-     * Sends a POST request with login credentials to the Spring Boot backend.
-     * Returns the user's database ID if login succeeds, or null if it fails.
+     * Sends a POST request with credentials to the backend and extracts the authenticated User ID.
+     *
+     * @param username user account handle
+     * @param password user secret key
+     * @return database primary key ID on successful login; null on error or bad credentials
      */
     public Long authenticateAndGetUserId(String username, String password) {
         try {
+        	// Building raw JSON strings manually, escaping if special characters are present
             String jsonPayload = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
             HttpRequest request = HttpRequest.newBuilder()

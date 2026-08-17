@@ -1,3 +1,6 @@
+/**
+ * Main application entry point that bootstraps the JavaFX user interface.
+ */
 package com.rental.client;
 
 import javafx.application.Application;
@@ -10,6 +13,11 @@ import java.io.IOException;
 
 public class ClientApplication extends Application {
 
+	/**
+     * Initializes and displays the primary stage with the Login FXML view layout.
+     *
+     * @param primaryStage top-level JavaFX stage container
+     */
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -26,6 +34,11 @@ public class ClientApplication extends Application {
         }
     }
 
+    /**
+     * Launches the JavaFX application execution runtime.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         launch(args); // Launches JavaFX background thread
     }

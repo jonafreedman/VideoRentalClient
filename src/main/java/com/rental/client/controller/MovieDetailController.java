@@ -1,3 +1,6 @@
+/**
+ * Controller class managing individual movie detail displays, rental execution, and user reviews.
+ */
 package com.rental.client.controller;
 
 import com.rental.client.Movie;
@@ -33,6 +36,9 @@ public class MovieDetailController {
     private final ObservableList<String> movieReviews = FXCollections.observableArrayList();
     private final ApiClient apiClient = new ApiClient();
 
+    /**
+     * Binds dropdown selection lists and assigns action button listeners.
+     */
     @FXML
     public void initialize() {
         // Populate Rating Options
@@ -51,6 +57,11 @@ public class MovieDetailController {
         submitReviewButton.setOnAction(e -> handlePostReview());
     }
 
+    /**
+     * Populates view UI elements and availability banners using details from the target movie object.
+     *
+     * @param movie selected movie model target
+     */
     public void setMovieData(Movie movie) {
         this.selectedMovie = movie;
         movieTitleLabel.setText(movie.getTitle());
@@ -75,6 +86,9 @@ public class MovieDetailController {
         loadMovieSpecificReviews(movie);
     }
 
+    /**
+     * Generates initial review entries tailored to the target movie title and genre.
+     */
     private void loadMovieSpecificReviews(Movie movie) {
         movieReviews.clear();
         String title = movie.getTitle();
@@ -85,6 +99,9 @@ public class MovieDetailController {
         movieReviews.add("⭐⭐⭐⭐⭐ - Charlie K: One of my personal favorites. Highly recommend renting it.");
     }
 
+    /**
+     * Calls REST ApiClient to record a loan transaction and decrements local available copies on success.
+     */
     @FXML
     private void handleRentMovie() {
         if (selectedMovie == null) {
@@ -120,6 +137,9 @@ public class MovieDetailController {
         }
     }
 
+    /**
+     * Processes submission of a new star rating and user comment into the review list.
+     */
     private void handlePostReview() {
         String rating = ratingComboBox.getValue();
         String critique = reviewTextArea.getText().trim();
@@ -143,7 +163,9 @@ public class MovieDetailController {
         showAlert(AlertType.INFORMATION, "Review Posted", "Your review for " + selectedMovie.getTitle() + " has been published!");
     }
 
-    // Helper method to display alert dialogs
+    /**
+     * Displays modal dialog boxes for system alerts and notifications.
+     */
     private void showAlert(AlertType alertType, String title, String content) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -152,6 +174,9 @@ public class MovieDetailController {
         alert.showAndWait();
     }
 
+    /**
+     * @return true if a rental operation completed successfully during this dialog session
+     */
     public boolean isRentalConfirmed() {
         return rentalConfirmed;
     }

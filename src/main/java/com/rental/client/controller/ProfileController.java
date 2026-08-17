@@ -1,3 +1,6 @@
+/**
+ * Controller class displaying account details and loan history records for the current user session.
+ */
 package com.rental.client.controller;
 
 import com.rental.client.Movie;
@@ -28,6 +31,9 @@ public class ProfileController {
 
     private final ObservableList<RentalLog> historyLogs = FXCollections.observableArrayList();
 
+    /**
+     * Displays the active session username and binds table view columns to RentalLog fields.
+     */
     @FXML
     public void initialize() {
         // Set logged-in username
@@ -46,6 +52,11 @@ public class ProfileController {
         backToCatalogButton.setOnAction(e -> closeWindow());
     }
 
+    /**
+     * Populates the user's rental history table by pairing active catalog rentals with mock historical logs.
+     *
+     * @param allMovies master movie observable list
+     */
     public void loadUserRentalHistory(ObservableList<Movie> allMovies) {
         historyLogs.clear();
 
@@ -66,6 +77,9 @@ public class ProfileController {
         historyLogs.add(new RentalLog("The Matrix", "2026-06-01", "2026-06-05", "RETURNED"));
     }
 
+    /**
+     * Closes the profile stage window.
+     */
     private void closeWindow() {
         Stage stage = (Stage) backToCatalogButton.getScene().getWindow();
         stage.close();

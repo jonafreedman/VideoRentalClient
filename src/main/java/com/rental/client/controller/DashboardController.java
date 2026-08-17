@@ -1,3 +1,6 @@
+/**
+ * Controller class managing main dashboard catalog displays, filtering, and navigation.
+ */
 package com.rental.client.controller;
 
 import java.util.List;
@@ -48,6 +51,9 @@ public class DashboardController {
     private FilteredList<Movie> filteredMovieList;
     private final ApiClient apiClient = new ApiClient();
 
+    /**
+     * Initializes component listeners, table column bindings, and loads remote backend catalog data.
+     */
     @FXML
     public void initialize() {
         // 1. Personalize User Account Button
@@ -84,6 +90,9 @@ public class DashboardController {
         viewProfileButton.setOnAction(event -> handleViewProfile());
     }
     
+    /**
+     * Fetches fresh catalog data from the backend REST service and updates the UI master list.
+     */
     private void loadMoviesFromBackend() {
         try {
             // Fetch movies from Spring Boot REST API
@@ -95,7 +104,9 @@ public class DashboardController {
         }
     }
     
-    // Method for movie search
+    /**
+     * Applies multi-criteria predicate filtering based on category selection and keyword text search.
+     */
     private void applyFilters() {
         String searchText = searchTextField.getText() == null ? "" : searchTextField.getText().toLowerCase().trim();
         String selectedCategory = categoryListView.getSelectionModel().getSelectedItem();
@@ -129,6 +140,9 @@ public class DashboardController {
         });
     }
 
+    /**
+     * Opens modal detail dialog for selected movie and triggers backend re-fetch if rented.
+     */
     @FXML
     private void handleInspectAndRent() {
         Movie selectedMovie = moviesTableView.getSelectionModel().getSelectedItem();
@@ -172,6 +186,9 @@ public class DashboardController {
         }
     }
 
+    /**
+     * Opens user profile modal view populated with rental transaction history.
+     */
     private void handleViewProfile() {
         try {
             FXMLLoader loader = new FXMLLoader(

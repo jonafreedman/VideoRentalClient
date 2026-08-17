@@ -1,3 +1,6 @@
+/**
+ * Service client responsible for dispatching HTTP requests to the Spring Boot REST API endpoints.[cite: 31]
+ */
 package com.rental.client.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,6 +21,9 @@ public class ApiClient {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Initializes the HTTP client instance with a 5-second connection timeout configuration.
+     */
     public ApiClient() {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
@@ -25,7 +31,12 @@ public class ApiClient {
         this.objectMapper = new ObjectMapper();
     }
 
-    // 1. Fetch Movie Catalog (GET /api/movies)
+    /**
+     * Fetches the complete movie catalog from the Spring Boot backend REST endpoint.
+     *
+     * @return list of Movie entities retrieved from the catalog database
+     * @throws Exception if HTTP communication fails or the response status is non-200
+     */
     public List<Movie> getAllMovies() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/movies"))
@@ -43,7 +54,15 @@ public class ApiClient {
         }
     }
 
-    // 2. Rent Movie (POST /api/loans/rent)
+    /**
+     * Tricky Bit: Parameter 'movieModifierId' must match the parameter name expected by the backend controller endpoint.
+     *
+     * Submits a POST request to record a movie rental for a specific user ID.
+     *
+     * @param movieId target movie ID to rent
+     * @param userId unique ID of the requesting user account
+     * @return true if backend acknowledges successful rental (HTTP 200/201); false otherwise
+     */
     public boolean rentMovie(Long movieId, Long userId) {
         try {
             // Matches @RequestParam Long userId, @RequestParam Long movieModifierId
@@ -67,7 +86,14 @@ public class ApiClient {
         }
     }
 
-    // 3. Return Movie (POST /api/loans/return)
+    /**
+     * Submits a JSON payload request to check in a borrowed DVD copy.
+     *
+     * @param movieId target movie ID
+     * @param username handle of the user returning the DVD copy
+     * @return true if return transaction succeeded
+     * @throws Exception if connection fails
+     */
     public boolean returnMovie(Long movieId, String username) throws Exception {
         String jsonPayload = String.format("{\"movieId\":%d, \"username\":\"%s\"}", movieId, username);
 
@@ -81,7 +107,13 @@ public class ApiClient {
         return response.statusCode() == 200;
     }
 
-    // 4. Fetch User Rental History Logs (GET /api/users/{username}/loans)
+    /**
+     * Requests user rental history records by username.
+     *
+     * @param username user account handle
+     * @return list of historical rental log records
+     * @throws Exception if request fails
+     */
     public List<RentalLog> getUserRentalHistory(String username) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/users/" + username + "/loans"))

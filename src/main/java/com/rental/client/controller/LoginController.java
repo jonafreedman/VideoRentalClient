@@ -1,3 +1,6 @@
+/**
+ * Controller class managing user authentication interactions and main window transition.
+ */
 package com.rental.client.controller;
 
 import com.rental.client.AuthService;
@@ -27,6 +30,9 @@ public class LoginController {
 
     private final AuthService authService = new AuthService();
 
+    /**
+     * Attaches action handlers to login and registration UI buttons.
+     */
     @FXML
     public void initialize() {
         loginButton.setOnAction(event -> handleLogin());
@@ -36,6 +42,9 @@ public class LoginController {
         });
     }
 
+    /**
+     * Validates input, submits credentials to backend, sets user session, and opens main dashboard.
+     */
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
@@ -75,6 +84,13 @@ public class LoginController {
         }
     }
 
+    /**
+     * Utility helper to display alert dialog windows.
+     *
+     * @param type alert message icon type
+     * @param title modal title bar string
+     * @param message main text body string
+     */
     private void showAlert(AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
