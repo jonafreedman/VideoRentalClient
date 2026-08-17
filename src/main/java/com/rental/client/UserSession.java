@@ -4,16 +4,17 @@ package com.rental.client;
 public class UserSession {
 
     private static UserSession instance;
+
     private String username;
-    
-    // private builder to force usage of startSession method
-    private UserSession(String username) {
+    private Long userId;
+
+    private UserSession(String username, Long userId) {
         this.username = username;
+        this.userId = userId;
     }
-    
-    // forces the user to have only one instance- no multiple sessions feom the same clients
-    public static void startSession(String username) {
-        instance = new UserSession(username);
+
+    public static void setInstance(String username, Long userId) {
+        instance = new UserSession(username, userId);
     }
 
     public static UserSession getInstance() {
@@ -26,5 +27,9 @@ public class UserSession {
 
     public String getUsername() {
         return username;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 }

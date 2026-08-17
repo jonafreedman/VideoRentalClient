@@ -44,17 +44,27 @@ public class ApiClient {
     }
 
     // 2. Rent Movie (POST /api/loans/rent)
-    public boolean rentMovie(Long movieId, String username) throws Exception {
-        String jsonPayload = String.format("{\"movieId\":%d, \"username\":\"%s\"}", movieId, username);
+    public boolean rentMovie(Long movieId, Long userId) {
+        try {
+            // Matches @RequestParam Long userId, @RequestParam Long movieModifierId
+            String url = BASE_URL + "/loans/rent?userId=" + userId + "&movieModifierId=" + movieId;
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/loans/rent"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
-                .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .header("Content-Type", "application/json")
+                    .build();
 
-        HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.statusCode() == 200 || response.statusCode() == 201;
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Rent Status Code: " + response.statusCode());
+            System.out.println("Rent Response Body: " + response.body());
+
+            return response.statusCode() == 200 || response.statusCode() == 201;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // 3. Return Movie (POST /api/loans/return)

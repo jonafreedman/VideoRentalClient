@@ -1,5 +1,8 @@
 package com.rental.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -8,9 +11,9 @@ import java.time.Duration;
 
 public class AuthService {
 
-    
     private static final String BASE_URL = "http://localhost:8080/api/users/login";
     private final HttpClient httpClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AuthService() {
         this.httpClient = HttpClient.newBuilder()
@@ -20,11 +23,10 @@ public class AuthService {
 
     /**
      * Sends a POST request with login credentials to the Spring Boot backend.
-     * Returns true if login is successful (HTTP 200), false otherwise.
+     * Returns the user's database ID if login succeeds, or null if it fails.
      */
-    public boolean login(String username, String password) {
+    public Long authenticateAndGetUserId(String username, String password) {
         try {
-            // Simple JSON payload string
             String jsonPayload = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -33,19 +35,24 @@ public class AuthService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                     .build();
 
-            // Send the request and wait for the response
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             System.out.println("Backend Response Code: " + response.statusCode());
             System.out.println("Backend Response Body: " + response.body());
 
-            // If the server returns HTTP 200 OK, the login is valid
-            return response.statusCode() == 200;
+            if (response.statusCode() == 200) {
+                // Parse JSON response to extract user ID
+                JsonNode root = objectMapper.readTree(response.body());
+                if (root.has("id")) {
+                    return root.get("id").asLong();
+                }
+            }
+            return null;
 
         } catch (Exception e) {
             System.err.println("Error communicating with backend server:");
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 }

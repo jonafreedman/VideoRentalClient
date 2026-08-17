@@ -47,21 +47,20 @@ public class LoginController {
 
         System.out.println("Attempting connection to backend for user: " + username);
         
-        // Check credentials with Spring Boot
-        boolean success = authService.login(username, password);
+        // Authenticate with Spring Boot and fetch user ID
+        Long userId = authService.authenticateAndGetUserId(username, password);
 
-        if (success) {
-            // 1. Save user to session memory
-            UserSession.startSession(username);
+        if (userId != null) {
+            // 1. Save both username and numeric ID to session memory
+            UserSession.setInstance(username, userId);
 
-            // 2. Load the main Dashboard view from the 'view' package
+            // 2. Load Dashboard view
             try {
                 FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/rental/client/view/DashboardView.fxml")
                 );
                 Parent dashboardRoot = loader.load();
                 
-                // Switch the current window's scene to the Dashboard
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(dashboardRoot, 950, 650));
                 stage.setTitle("Movie Rental System - Dashboard");

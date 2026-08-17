@@ -92,15 +92,13 @@ public class MovieDetailController {
             return;
         }
 
-        // Get currently logged-in user from UserSession
-        String currentUsername = (UserSession.getInstance() != null) ? UserSession.getInstance().getUsername() : "User";
+        // Pass numeric ID (e.g., 1L) to match @RequestParam Long userId in Spring Boot
+        Long currentUserId = UserSession.getInstance().getUserId(); 
 
         try {
-            // Send POST /api/loans/rent request to Spring Boot
-            boolean success = apiClient.rentMovie(selectedMovie.getId(), currentUsername);
+            boolean success = apiClient.rentMovie(selectedMovie.getId(), currentUserId);
 
             if (success) {
-                // Decrementing availableCopies automatically updates getStatus()
                 if (selectedMovie.getAvailableCopies() > 0) {
                     selectedMovie.setAvailableCopies(selectedMovie.getAvailableCopies() - 1);
                 }
@@ -109,12 +107,11 @@ public class MovieDetailController {
                 showAlert(AlertType.INFORMATION, "Success", 
                     "You have successfully rented " + selectedMovie.getTitle() + "!");
                 
-                // Close modal stage
                 Stage stage = (Stage) rentButton.getScene().getWindow();
                 stage.close();
             } else {
                 showAlert(AlertType.ERROR, "Rental Failed", 
-                    "Server rejected the rental request. Please check if copies are available.");
+                    "Server rejected rental. Check if movie copies are in stock.");
             }
         } catch (Exception e) {
             e.printStackTrace();
