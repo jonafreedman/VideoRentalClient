@@ -7,17 +7,15 @@ public class Movie {
     private Long id;
     private String title;
     private String category;
-    private String status;
     private int totalCopies;
     private int availableCopies;
 
     public Movie() {}
 
-    public Movie(Long id, String title, String category, String status, int totalCopies, int availableCopies) {
+    public Movie(Long id, String title, String category, int totalCopies, int availableCopies) {
         this.id = id;
         this.title = title;
         this.category = category;
-        this.status = status;
         this.totalCopies = totalCopies;
         this.availableCopies = availableCopies;
     }
@@ -32,8 +30,13 @@ public class Movie {
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    // Derived property used by TableView PropertyValueFactory("status")
+    public String getStatus() {
+        if (this.availableCopies <= 0) {
+            return "Rented";
+        }
+        return "Available";
+    }
 
     public int getTotalCopies() { return totalCopies; }
     public void setTotalCopies(int totalCopies) { this.totalCopies = totalCopies; }

@@ -2,6 +2,8 @@ package com.rental.client.controller;
 
 import com.rental.client.Movie;
 import com.rental.client.UserSession;
+import com.rental.client.service.ApiClient;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 public class MovieDetailController {
 
@@ -28,6 +31,7 @@ public class MovieDetailController {
     private Movie selectedMovie;
     private boolean rentalConfirmed = false;
     private final ObservableList<String> movieReviews = FXCollections.observableArrayList();
+    private final ApiClient apiClient = new ApiClient();
 
     @FXML
     public void initialize() {
@@ -52,15 +56,15 @@ public class MovieDetailController {
         movieTitleLabel.setText(movie.getTitle());
         movieGenreLabel.setText("Genre: " + movie.getCategory());
 
-        // Update Stock/Availability Banner
-        if ("Rented".equalsIgnoreCase(movie.getStatus())) {
+        // Update Stock/Availability Banner based on ACTUAL database inventory numbers
+        if (movie.getAvailableCopies() <= 0) {
             movieStockLabel.setText("● Currently Rented - Out of Stock");
             movieStockLabel.setStyle("-fx-text-fill: #dc2626; -fx-font-weight: bold;");
             rentButton.setDisable(true);
             rentButton.setText("Out of Stock");
             rentButton.setStyle("-fx-background-color: #94a3b8; -fx-text-fill: white; -fx-background-radius: 6px;");
         } else {
-            movieStockLabel.setText("● In Stock - Available for Rent");
+            movieStockLabel.setText("● In Stock (" + movie.getAvailableCopies() + " copies) - Available for Rent");
             movieStockLabel.setStyle("-fx-text-fill: #16a34a; -fx-font-weight: bold;");
             rentButton.setDisable(false);
             rentButton.setText("Rent DVD Now");
@@ -81,19 +85,41 @@ public class MovieDetailController {
         movieReviews.add("⭐⭐⭐⭐⭐ - Charlie K: One of my personal favorites. Highly recommend renting it.");
     }
 
+    @FXML
     private void handleRentMovie() {
-        if (selectedMovie != null && "Available".equalsIgnoreCase(selectedMovie.getStatus())) {
-            selectedMovie.setStatus("Rented");
-            rentalConfirmed = true;
+        if (selectedMovie == null) {
+            showAlert(AlertType.WARNING, "No Selection", "No movie selected for rental.");
+            return;
+        }
 
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Rental Confirmed");
-            alert.setHeaderText(null);
-            alert.setContentText("You have successfully rented " + selectedMovie.getTitle() + "!");
-            alert.showAndWait();
+        // Get currently logged-in user from UserSession
+        String currentUsername = (UserSession.getInstance() != null) ? UserSession.getInstance().getUsername() : "User";
 
-            // Refresh modal UI state
-            setMovieData(selectedMovie);
+        try {
+            // Send POST /api/loans/rent request to Spring Boot
+            boolean success = apiClient.rentMovie(selectedMovie.getId(), currentUsername);
+
+            if (success) {
+                // Decrementing availableCopies automatically updates getStatus()
+                if (selectedMovie.getAvailableCopies() > 0) {
+                    selectedMovie.setAvailableCopies(selectedMovie.getAvailableCopies() - 1);
+                }
+                this.rentalConfirmed = true;
+
+                showAlert(AlertType.INFORMATION, "Success", 
+                    "You have successfully rented " + selectedMovie.getTitle() + "!");
+                
+                // Close modal stage
+                Stage stage = (Stage) rentButton.getScene().getWindow();
+                stage.close();
+            } else {
+                showAlert(AlertType.ERROR, "Rental Failed", 
+                    "Server rejected the rental request. Please check if copies are available.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Connection Error", 
+                "Could not reach Spring Boot server to process rental.");
         }
     }
 
@@ -102,11 +128,7 @@ public class MovieDetailController {
         String critique = reviewTextArea.getText().trim();
 
         if (rating == null || critique.isEmpty()) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Incomplete Review");
-            alert.setHeaderText(null);
-            alert.setContentText("Please select a star rating and type a critique before posting.");
-            alert.showAndWait();
+            showAlert(AlertType.WARNING, "Incomplete Review", "Please select a star rating and type a critique before posting.");
             return;
         }
 
@@ -121,10 +143,15 @@ public class MovieDetailController {
         reviewTextArea.clear();
         ratingComboBox.getSelectionModel().clearSelection();
 
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Review Posted");
+        showAlert(AlertType.INFORMATION, "Review Posted", "Your review for " + selectedMovie.getTitle() + " has been published!");
+    }
+
+    // Helper method to display alert dialogs
+    private void showAlert(AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText("Your review for " + selectedMovie.getTitle() + " has been published!");
+        alert.setContentText(content);
         alert.showAndWait();
     }
 

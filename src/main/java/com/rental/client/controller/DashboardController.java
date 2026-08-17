@@ -129,6 +129,7 @@ public class DashboardController {
         });
     }
 
+    @FXML
     private void handleInspectAndRent() {
         Movie selectedMovie = moviesTableView.getSelectionModel().getSelectedItem();
 
@@ -157,12 +158,12 @@ public class DashboardController {
             modalStage.setScene(new Scene(root, 750, 620));
             modalStage.setResizable(false);
             
-            // Show window and wait until closed
+            // 1. Show window and block execution until closed
             modalStage.showAndWait();
 
-            // Refresh dashboard TableView if rental status changed
+            // 2. Refresh live backend data if rental succeeded
             if (controller.isRentalConfirmed()) {
-                moviesTableView.refresh();
+                loadMoviesFromBackend(); // Re-queries Spring Boot API for exact live counts
             }
 
         } catch (Exception e) {
