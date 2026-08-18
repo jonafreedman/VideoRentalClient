@@ -1,11 +1,11 @@
 /**
- * Controller class displaying account details and loan history records for the current user session.
+ * Controller class displaying account session details and customer rental history logs.
  */
 package com.rental.client.controller;
 
-import com.rental.client.Movie;
 import com.rental.client.RentalLog;
 import com.rental.client.UserSession;
+import com.rental.client.service.ApiClient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,7 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import java.time.LocalDate;
+import java.util.List;
 
 public class ProfileController {
 
@@ -30,17 +30,16 @@ public class ProfileController {
     @FXML private TableColumn<RentalLog, String> loanStatusColumn;
 
     private final ObservableList<RentalLog> historyLogs = FXCollections.observableArrayList();
+    private final ApiClient apiClient = new ApiClient();
 
     /**
-     * Displays the active session username and binds table view columns to RentalLog fields.
+     * Binds table columns to RentalLog fields and displays active account username.
      */
     @FXML
     public void initialize() {
-        // Set logged-in username
-        String activeUser = (UserSession.getInstance() != null) ? UserSession.getInstance().getUsername() : "customer_user_01";
+        String activeUser = (UserSession.getInstance() != null) ? UserSession.getInstance().getUsername() : "Guest";
         profileUserLabel.setText("Active Account: " + activeUser);
 
-        // Bind Table View Columns
         loanTitleColumn.setCellValueFactory(new PropertyValueFactory<>("movieTitle"));
         rentDateColumn.setCellValueFactory(new PropertyValueFactory<>("dateBorrowed"));
         returnDateColumn.setCellValueFactory(new PropertyValueFactory<>("dateReturned"));
@@ -48,37 +47,32 @@ public class ProfileController {
 
         loanHistoryTableView.setItems(historyLogs);
 
-        // Close window action
         backToCatalogButton.setOnAction(e -> closeWindow());
     }
 
     /**
-     * Populates the user's rental history table by pairing active catalog rentals with mock historical logs.
-     *
-     * @param allMovies master movie observable list
+     * Fetches real user rental logs from the Spring Boot API endpoint using the active session user ID.
      */
-    public void loadUserRentalHistory(ObservableList<Movie> allMovies) {
+    public void loadUserRentalHistory() {
         historyLogs.clear();
 
-        // Populate history logs based on active rentals + seed historical returns
-        for (Movie movie : allMovies) {
-            if ("Rented".equalsIgnoreCase(movie.getStatus())) {
-                historyLogs.add(new RentalLog(
-                    movie.getTitle(),
-                    LocalDate.now().minusDays(3).toString(),
-                    "Active Loan",
-                    "ACTIVE"
-                ));
-            }
+        if (UserSession.getInstance() == null) {
+            return;
         }
 
-        // Add completed historical logs for testing UI
-        historyLogs.add(new RentalLog("Inception", "2026-07-10", "2026-07-15", "RETURNED"));
-        historyLogs.add(new RentalLog("The Matrix", "2026-06-01", "2026-06-05", "RETURNED"));
+        Long currentUserId = UserSession.getInstance().getUserId();
+
+        try {
+            List<RentalLog> userLogs = apiClient.getUserRentalHistory(currentUserId);
+            historyLogs.addAll(userLogs);
+        } catch (Exception e) {
+            System.err.println("Could not load user rental logs from server.");
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Closes the profile stage window.
+     * Closes current stage window to return to catalog dashboard.
      */
     private void closeWindow() {
         Stage stage = (Stage) backToCatalogButton.getScene().getWindow();

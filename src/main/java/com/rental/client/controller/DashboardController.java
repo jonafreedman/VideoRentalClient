@@ -197,8 +197,7 @@ public class DashboardController {
             Parent root = loader.load();
 
             ProfileController controller = loader.getController();
-            // Load history logs based on master movie list
-            controller.loadUserRentalHistory(masterMovieList);
+            controller.loadUserRentalHistory(); 
 
             Stage modalStage = new Stage();
             modalStage.setTitle("Customer Profile & Rental History Logs");

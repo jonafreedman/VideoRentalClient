@@ -87,20 +87,17 @@ public class ApiClient {
     }
 
     /**
-     * Submits a JSON payload request to check in a borrowed DVD copy.
+     * Submits an HTTP PUT request to check in a borrowed DVD copy by its loan ID.
      *
-     * @param movieId target movie ID
-     * @param username handle of the user returning the DVD copy
-     * @return true if return transaction succeeded
-     * @throws Exception if connection fails
+     * @param loanId unique identifier of the active loan transaction record
+     * @return true if the backend confirms successful return check-in (HTTP 200)
+     * @throws Exception if HTTP communication fails or connection times out
      */
-    public boolean returnMovie(Long movieId, String username) throws Exception {
-        String jsonPayload = String.format("{\"movieId\":%d, \"username\":\"%s\"}", movieId, username);
-
+    public boolean returnMovie(Long loanId) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/loans/return"))
+                .uri(URI.create(BASE_URL + "/loans/return/" + loanId))
+                .PUT(HttpRequest.BodyPublishers.noBody())
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                 .build();
 
         HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -108,15 +105,15 @@ public class ApiClient {
     }
 
     /**
-     * Requests user rental history records by username.
+     * Fetches historical rental transaction logs for a specific customer by user ID.
      *
-     * @param username user account handle
-     * @return list of historical rental log records
-     * @throws Exception if request fails
+     * @param userId unique primary key identifier of the targeted user account
+     * @return list of historical rental log records belonging to the account
+     * @throws Exception if HTTP communication fails or response status is non-200
      */
-    public List<RentalLog> getUserRentalHistory(String username) throws Exception {
+    public List<RentalLog> getUserRentalHistory(Long userId) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/users/" + username + "/loans"))
+                .uri(URI.create(BASE_URL + "/loans/user/" + userId))
                 .GET()
                 .header("Accept", "application/json")
                 .build();
