@@ -127,4 +127,29 @@ public class ApiClient {
             throw new RuntimeException("Failed to fetch rental history: HTTP " + response.statusCode());
         }
     }
+    
+    /**
+     * Submits a POST request to register a new customer account on the backend server.
+     *
+     * @param username requested account handle
+     * @param password account authentication password
+     * @return true if backend acknowledges successful account creation (HTTP 200/201)
+     */
+    public boolean registerUser(String username, String password) {
+        try {
+            String jsonPayload = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + "/users/register"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.statusCode() == 200 || response.statusCode() == 201;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

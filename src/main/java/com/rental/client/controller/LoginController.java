@@ -5,6 +5,7 @@ package com.rental.client.controller;
 
 import com.rental.client.AuthService;
 import com.rental.client.UserSession;
+import com.rental.client.service.ApiClient;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,31 +20,22 @@ import javafx.stage.Stage;
 
 public class LoginController {
 
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private Button loginButton;
-    @FXML
-    private Button registerButton;
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
 
     private final AuthService authService = new AuthService();
+    private final ApiClient apiClient = new ApiClient();
 
-    /**
-     * Attaches action handlers to login and registration UI buttons.
-     */
     @FXML
     public void initialize() {
         loginButton.setOnAction(event -> handleLogin());
-
-        registerButton.setOnAction(event -> {
-            System.out.println("Create Account Clicked!");
-        });
+        registerButton.setOnAction(event -> handleRegister());
     }
 
     /**
-     * Validates input, submits credentials to backend, sets user session, and opens main dashboard.
+     * Validates input and logs into existing user account.
      */
     private void handleLogin() {
         String username = usernameField.getText().trim();
@@ -54,16 +46,40 @@ public class LoginController {
             return;
         }
 
-        System.out.println("Attempting connection to backend for user: " + username);
-        
-        // Authenticate with Spring Boot and fetch user ID
+        executeLogin(username, password);
+    }
+
+    /**
+     * Registers a new account and automatically logs in on success.
+     */
+    private void handleRegister() {
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText().trim();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert(AlertType.WARNING, "Validation Error", "Please enter a username and password to create an account.");
+            return;
+        }
+
+        boolean success = apiClient.registerUser(username, password);
+
+        if (success) {
+            showAlert(AlertType.INFORMATION, "Account Created", "Welcome! Account created successfully. Logging you in...");
+            executeLogin(username, password); // Auto-login after registration
+        } else {
+            showAlert(AlertType.ERROR, "Registration Failed", "Could not register account. Username may already exist.");
+        }
+    }
+
+    /**
+     * Authenticates with backend and loads the Dashboard view.
+     */
+    private void executeLogin(String username, String password) {
         Long userId = authService.authenticateAndGetUserId(username, password);
 
         if (userId != null) {
-            // 1. Save both username and numeric ID to session memory
             UserSession.setInstance(username, userId);
 
-            // 2. Load Dashboard view
             try {
                 FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/rental/client/view/DashboardView.fxml")
@@ -84,13 +100,6 @@ public class LoginController {
         }
     }
 
-    /**
-     * Utility helper to display alert dialog windows.
-     *
-     * @param type alert message icon type
-     * @param title modal title bar string
-     * @param message main text body string
-     */
     private void showAlert(AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
