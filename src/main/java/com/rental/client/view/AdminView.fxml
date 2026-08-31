@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rental.client.controller.AdminController">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #0f172a; -fx-padding: 12px 20px;">
+         <children>
+            <Label style="-fx-font-size: 22px;" text="⚙️" />
+            <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" text="Movie Rental Hub — Store Management Dashboard" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      
+      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Catalog &amp; Inventory Management">
+            <content>
+              <SplitPane dividerPositions="0.35" style="-fx-background-color: transparent;">
+                <items>
+                  <AnchorPane minWidth="320.0" style="-fx-background-color: #ffffff;">
+                     <children>
+                        <VBox spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                           <children>
+                              <Label style="-fx-font-weight: bold;" text="➕ Register New Movie Asset" textFill="#1e293b">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              
+                              <GridPane hgap="8.0" vgap="12.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints minWidth="100.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                 </columnConstraints>
+                                 <children>
+                                    <Label style="-fx-font-weight: bold;" text="Movie Title:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                    <TextField fx:id="newTitleField" promptText="Enter film title" style="-fx-background-radius: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    
+                                    <Label style="-fx-font-weight: bold;" text="Category:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                    <TextField fx:id="newCategoryField" promptText="e.g. Action, Sci-Fi" style="-fx-background-radius: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    
+                                    <Label style="-fx-font-weight: bold;" text="Initial Copies:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                    <TextField fx:id="newStockField" promptText="Total inventory count" style="-fx-background-radius: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                 </children>
+                              </GridPane>
+                              
+                              <Button fx:id="addMovieButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="300.0" style="-fx-background-color: #1e293b; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="+ Save to Catalog" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+                  
+                  <AnchorPane minWidth="550.0">
+                     <children>
+                        <VBox spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                           <children>
+                              <Label style="-fx-font-weight: bold;" text="📦 Inventory Stock Control" textFill="#1e293b">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              
+                              <TableView fx:id="inventoryTableView" style="-fx-background-radius: 6px;" VBox.vgrow="ALWAYS">
+                                <columns>
+                                  <TableColumn fx:id="invTitleColumn" prefWidth="250.0" text="Movie Title" />
+                                  <TableColumn fx:id="invCategoryColumn" prefWidth="130.0" text="Genre" />
+                                  <TableColumn fx:id="invAvailableColumn" prefWidth="120.0" text="Available Stock" />
+                                </columns>
+                              </TableView>
+                              
+                              <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: white; -fx-padding: 10px; -fx-background-radius: 6px;">
+                                 <children>
+                                    <Label style="-fx-font-weight: bold;" text="Adjust Selected Copies:" textFill="#334155" />
+                                    <TextField fx:id="updateStockField" prefWidth="100.0" promptText="New count" style="-fx-background-radius: 4px;" />
+                                    <Button fx:id="updateStockButton" mnemonicParsing="false" style="-fx-background-color: #0284c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Update Stock" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+                </items>
+              </SplitPane>
+            </content>
+          </Tab>
+
+          <Tab text="Active Store Loans">
+            <content>
+              <AnchorPane>
+                 <children>
+                    <VBox spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                       <children>
+                          <Label style="-fx-font-weight: bold;" text="📋 Global Active Customer Loans" textFill="#1e293b">
+                             <font>
+                                <Font size="15.0" />
+                             </font>
+                          </Label>
+                          
+                          <TableView fx:id="adminTrackingTableView" style="-fx-background-radius: 6px;" VBox.vgrow="ALWAYS">
+                            <columns>
+                              <TableColumn fx:id="adminUserColumn" prefWidth="180.0" text="Customer Username" />
+                              <TableColumn fx:id="adminMovieColumn" prefWidth="280.0" text="Rented Title" />
+                              <TableColumn fx:id="adminDateColumn" prefWidth="200.0" text="Rental Checkout Timestamp" />
+                            </columns>
+                          </TableView>
+                          
+                          <HBox alignment="TOP_RIGHT">
+                             <children>
+                                <Button fx:id="markReturnedButton" mnemonicParsing="false" prefHeight="38.0" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="✓ Process Selected DVD Return" />
+                             </children>
+                          </HBox>
+                       </children>
+                    </VBox>
+                 </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          
+          <Tab text="User Management">
+            <content>
+              <AnchorPane>
+                 <children>
+                    <VBox spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                       <children>
+                          <Label style="-fx-font-weight: bold;" text="👥 System User Accounts &amp; Permissions" textFill="#1e293b">
+                             <font>
+                                <Font size="15.0" />
+                             </font>
+                          </Label>
+                          
+                          <TableView fx:id="usersTableView" style="-fx-background-radius: 6px;" VBox.vgrow="ALWAYS">
+                            <columns>
+                              <TableColumn fx:id="userIdColumn" prefWidth="80.0" text="User ID" />
+                              <TableColumn fx:id="usernameColumn" prefWidth="300.0" text="Username" />
+                              <TableColumn fx:id="userRoleColumn" prefWidth="200.0" text="Current System Role" />
+                            </columns>
+                          </TableView>
+                          
+                          <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-background-color: white; -fx-padding: 10px; -fx-background-radius: 6px;">
+                             <children>
+                                <Label style="-fx-font-weight: bold;" text="Modify Selected Account Role:" textFill="#334155" />
+                                <Button fx:id="toggleRoleButton" mnemonicParsing="false" style="-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Toggle Role (USER ↔ ADMIN)" />
+                             </children>
+                          </HBox>
+                       </children>
+                    </VBox>
+                 </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>

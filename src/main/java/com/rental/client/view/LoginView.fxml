@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="450.0" prefWidth="600.0" style="-fx-background-color: #f4f6f9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rental.client.controller.LoginController">
+   <children>
+      <VBox alignment="CENTER" spacing="25.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <VBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Label text="&#127916;" style="-fx-font-size: 48px;" />
+                  <Label text="Movie Rental System" style="-fx-text-fill: #1e293b;">
+                     <font>
+                        <Font name="Segoe UI Bold" size="26.0" />
+                     </font>
+                  </Label>
+                  <Label text="Sign in to manage your collection and rentals" textFill="#64748b">
+                     <font>
+                        <Font name="Segoe UI" size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            
+            <VBox spacing="15.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);">
+               <padding>
+                  <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+               </padding>
+               <children>
+                  <GridPane hgap="10.0" vgap="15.0" alignment="CENTER">
+                     <columnConstraints>
+                        <ColumnConstraints minWidth="80.0" prefWidth="80.0" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                     </columnConstraints>
+                     <children>
+                        <Label text="Username:" textFill="#475569" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="usernameField" promptText="Enter username" style="-fx-background-radius: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="220.0"/>
+                        
+                        <Label text="Password:" textFill="#475569" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <PasswordField fx:id="passwordField" promptText="Enter password" style="-fx-background-radius: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="220.0"/>
+                     </children>
+                  </GridPane>
+                  <HBox alignment="CENTER" spacing="15.0">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                     <children>
+                        <Button fx:id="loginButton" mnemonicParsing="false" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Sign In" prefWidth="100.0" prefHeight="32.0"/>
+                        <Button fx:id="registerButton" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-text-fill: #2563eb; -fx-font-weight: bold; -fx-cursor: hand;" text="Create Account" prefWidth="130.0" prefHeight="32.0"/>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
